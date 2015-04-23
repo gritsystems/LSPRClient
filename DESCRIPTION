@@ -1,0 +1,11 @@
+Package: LSPRClient
+Type: Package
+Title:LSP R Client for accessing the LSP REST API
+Version: 0.1
+Date: 2015-04-23
+Depends: RCurl, RJSONIO
+Author: Steen Manniche
+Maintainer: steen@gritsystems.dk
+Description: This package enable querying the LSP REST interface from R
+License: GPL-3
+
