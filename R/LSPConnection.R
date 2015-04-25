@@ -38,7 +38,6 @@ connectToLSP <- function( lsp_host, api_token ){
 
 .lspGet <- function( lsp_host, path='/' ){
     endPoint <- paste( lsp_host, path, sep="" )
-    cat( endPoint )
     tryCatch( response <- getURL( endPoint ),
              error = function( e ){
                  message('Unable to complete the request, \n',
@@ -46,7 +45,7 @@ connectToLSP <- function( lsp_host, api_token ){
                          e)
              })
 
-    fromJSON( response )
+    .createDataFrame( fromJSON( response ) )
 }
 
 .lspGetFallback <-  function( lsp_host, path='/' ){
@@ -61,8 +60,6 @@ connectToLSP <- function( lsp_host, api_token ){
 
     response <- list()
 
-    cat(readLines(connection))
-    
     # The HTTP request status is in the first line of the response 
     response$status <- readLines( connection, n=1 )
 
@@ -83,3 +80,13 @@ connectToLSP <- function( lsp_host, api_token ){
     response    
 }
 
+.createDataFrame <- function( resp ){
+    total <- resp$total
+    colNames = c()
+    mtrx <- matrix( nrow=total, ncol=length( resp$data[1] ) )
+
+    for( i in 1:total ){
+        resp[[i]] <- unlist( resp[[i]] )
+        colNames <- union( colNames, names( resp[[i]] ) )
+    }
+}
