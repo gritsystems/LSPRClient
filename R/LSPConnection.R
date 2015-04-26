@@ -45,7 +45,8 @@ connectToLSP <- function( lsp_host, api_token ){
                          e)
              })
 
-    .createDataFrame( fromJSON( response ) )
+    
+    .createDataFrame( jsonlite::fromJSON( response ) )
 }
 
 .lspGetFallback <-  function( lsp_host, path='/' ){
@@ -77,16 +78,13 @@ connectToLSP <- function( lsp_host, api_token ){
     
     response$body = fromJSON( resp, asText=TRUE, nullValue=NA )
     
-    response    
+    .createDataFrame( response )
 }
 
 .createDataFrame <- function( resp ){
-    total <- resp$total
-    colNames = c()
-    mtrx <- matrix( nrow=total, ncol=length( resp$data[1] ) )
-
-    for( i in 1:total ){
-        resp[[i]] <- unlist( resp[[i]] )
-        colNames <- union( colNames, names( resp[[i]] ) )
-    }
+    json_file <- lapply(resp$data, function(x) {
+                            x[sapply(x, is.null)] <- NA
+                            unlist(x)
+                        })
+    as.data.frame( json_file )
 }
