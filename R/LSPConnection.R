@@ -20,17 +20,17 @@
 #
 # You should have received a copy of the GNU General Public License along
 # with this program. If not, see <http://www.gnu.org/licenses/>.
-lspClientEnv <- NULL
+lspClientEnv <<- NULL
 lspClientEnv$api_version <- "0.1.0"
 
 connectToLSP <- function( lsp_host, usern, api_token ){
-    lspClientEnv$host <- lsp_host
+    lspClientEnv$host <<- lsp_host
     
     if( nchar(usern, type="chars") < 1 ){
       stop( "No username provided for the connection. Cannot continue")
     }else
     {
-      lspClientEnv$user <- usern      
+      lspClientEnv$user <<- usern      
     }
       
     if(  nchar(api_token, type="chars") < 1 ){
@@ -38,20 +38,29 @@ connectToLSP <- function( lsp_host, usern, api_token ){
             "Go to ", lsp_host, "and paste the auth token below\n")
         api_token <- readline()
     }   
-    lspClientEnv$token <- api_token
+    lspClientEnv$token <<- api_token
     
     .authenticateWithLSP( lspClientEnv )
 }
 
 .authenticateWithLSP <- function( lspClientEnv ){
-  .lspGet(lspClientEnv$host, 'api/version', lspClientEnv$token)
+  version <- .lspGet(lspClientEnv$host, 'api/version', lspClientEnv$token)
+  if( version$api_version != lspClientEnv$api_version )
+  {
+    warning( sprintf( 'Server is version %s but this client expects %s\nThings might not work as expected', version$api_version, lspClientEnv$api_version ) )
+  }else
+  {
+    message( sprintf( 'Successfully authenticated with LSP API (v%s), ready to continue', version$api_version ) )
+  }
 }
 
 .lspGet <- function( lsp_host, path='/', api_token ){
     endPoint <- paste( lsp_host, path, '?token=', api_token, sep="" )
 
+    #print( endPoint )
+    
     # use the ssl.verifyhost=FALSE option to bypass certificate check
-    tryCatch( response <- getURL( endPoint ),
+    tryCatch( response <- getURL( endPoint, ssl.verifyhost=FALSE ),
              error = function( e ){
                  stop('Unable to complete the request, \n',
                          'The message from the server was: \n',
@@ -64,6 +73,7 @@ connectToLSP <- function( lsp_host, usern, api_token ){
                          'The error message from the server was: \n',
                          e$message)
               })
+    #print(jsonResp)
     .createDataFrame( jsonResp )
 }
 
