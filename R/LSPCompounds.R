@@ -21,6 +21,10 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. If not, see <http://www.gnu.org/licenses/>.
 
-getCompounds <- function( collaboratorId, externalIds=[], as.data.frame=TRUE){
-    compoundResults <- .lspGet( '/lsp/compound_qs/')
+getCompound <- function( collaboratorId, compoundId, as.data.frame=TRUE){
+  compoundResults <- .lspGet(lspClientEnv$host, sprintf('/api/compounds/%s.json', compoundId), lspClientEnv$token)
+}
+
+getCompounds <- function( collaboratorId, externalIds=list(), as.data.frame=TRUE){
+  compoundResults <- .lspGet(lspClientEnv$host, 'api/compounds.json', lspClientEnv$token)
 }
