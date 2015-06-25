@@ -7,6 +7,12 @@ The prerequisites for connecting to LSP is an API token, which is obtainable fro
 
 # Dependencies
 
+## jsonlite
+
+Available on CRAN, installable with
+
+    install.packages('jsonlite')
+
 ## RCurl
 Windows users may need to download the binary package from http://cran.r-project.org/web/packages/RCurl/index.html
 
