@@ -20,24 +20,35 @@
 #
 # You should have received a copy of the GNU General Public License along
 # with this program. If not, see <http://www.gnu.org/licenses/>.
+lspClientEnv <- NULL
+lspClientEnv$api_version <- "0.1.0"
 
-connectToLSP <- function( lsp_host, api_token ){
+connectToLSP <- function( lsp_host, usern, api_token ){
     lspClientEnv$host <- lsp_host
-    if( !api_token ){
+    
+    if( nchar(usern, type="chars") < 1 ){
+      stop( "No username provided for the connection. Cannot continue")
+    }else
+    {
+      lspClientEnv$user <- usern      
+    }
+      
+    if(  nchar(api_token, type="chars") < 1 ){
         cat("Please provide an authentication token from your settings page in LSP\n",
             "Go to ", lsp_host, "and paste the auth token below\n")
         api_token <- readline()
-    }
+    }   
     lspClientEnv$token <- api_token
-    .authenicateWithLSP( lsp )
+    
+    .authenticateWithLSP( lspClientEnv )
 }
 
-.authenticateWithLSP <- function( api_token ){
-    TRUE
+.authenticateWithLSP <- function( lspClientEnv ){
+  .lspGet(lspClientEnv$host, 'api/', lspClientEnv$token)
 }
 
-.lspGet <- function( lsp_host, path='/' ){
-    endPoint <- paste( lsp_host, path, sep="" )
+.lspGet <- function( lsp_host, path='/', api_token ){
+    endPoint <- paste( lsp_host, path, '?token=', api_token, sep="" )
     tryCatch( response <- getURL( endPoint ),
              error = function( e ){
                  message('Unable to complete the request, \n',
