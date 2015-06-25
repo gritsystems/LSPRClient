@@ -44,20 +44,27 @@ connectToLSP <- function( lsp_host, usern, api_token ){
 }
 
 .authenticateWithLSP <- function( lspClientEnv ){
-  .lspGet(lspClientEnv$host, 'api/', lspClientEnv$token)
+  .lspGet(lspClientEnv$host, 'api/version', lspClientEnv$token)
 }
 
 .lspGet <- function( lsp_host, path='/', api_token ){
     endPoint <- paste( lsp_host, path, '?token=', api_token, sep="" )
+
+    # use the ssl.verifyhost=FALSE option to bypass certificate check
     tryCatch( response <- getURL( endPoint ),
              error = function( e ){
-                 message('Unable to complete the request, \n',
+                 stop('Unable to complete the request, \n',
                          'The message from the server was: \n',
-                         e)
+                         e$message)
              })
 
-    
-    .createDataFrame( jsonlite::fromJSON( response ) )
+    tryCatch( jsonResp <- jsonlite::fromJSON( response ),
+              error = function( e ){
+                stop( 'Could not parse JSON response, \n',
+                         'The error message from the server was: \n',
+                         e$message)
+              })
+    .createDataFrame( jsonResp )
 }
 
 .lspGetFallback <-  function( lsp_host, path='/' ){
