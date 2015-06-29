@@ -23,6 +23,34 @@ Windows users may need to download the binary package from http://cran.r-project
 
 where $CURRENT_VERSION is a tag, e.g. `1.0.0`
 
+# Basic usage
+
+## Get your API key from LSP
+
+First off, obtain the API key from LSP by logging in to the LSP installation and pressing your username in the upper right corner
+
+
+![clicking settings](lsp_settings.png)
+
+This should open the settings window, where your API key can be obtained.
+
+![settings dialog](lsp_api_token.png)
+
+After installing the LSPRClient, copy the token into the call to the `connectToLSP` function along with the server adress:
+
+```{r}
+connectToLSP('https://lspinstallation.yourserver.tld/', 'copied_token_goes_here')
+```
+
+And execute the function. If all goes well, you should see the message
+
+```{txt}
+Successfully authenticated with LSP API (v0.1.0), ready to continue
+```
+
+and you should be all set up to begin querying the LSP installation for data.
+
+
 # Contributing
 
 Contributions are most welcome!
