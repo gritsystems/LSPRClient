@@ -21,7 +21,7 @@ Windows users may need to download the binary package from http://cran.r-project
     require(devtools)
     install_github( 'gritsystems/lsprclient', ref='$CURRENT_VERSION' )
 
-where $CURRENT_VERSION is a tag, e.g. `1.0.0`
+where $CURRENT_VERSION is a git commit reference, preferably a tag, e.g. `1.0.0` or `master` to get the `HEAD` of the `master` branch.
 
 # Basic usage
 
