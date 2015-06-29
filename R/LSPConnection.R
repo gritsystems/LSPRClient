@@ -23,16 +23,15 @@
 lspClientEnv <<- NULL
 lspClientEnv$api_version <- "0.1.0"
 
-connectToLSP <- function( lsp_host, usern, api_token ){
-    lspClientEnv$host <<- lsp_host
-    
-    if( nchar(usern, type="chars") < 1 ){
-      stop( "No username provided for the connection. Cannot continue")
-    }else
+connectToLSP <- function( lsp_host, api_token ){
+  
+    if( substring(lsp_host, nchar(lsp_host)) != '/' )
     {
-      lspClientEnv$user <<- usern      
+      lsp_host = paste( lsp_host, '/', sep="" )
     }
-      
+  
+    lspClientEnv$host <<- lsp_host
+        
     if(  nchar(api_token, type="chars") < 1 ){
         cat("Please provide an authentication token from your settings page in LSP\n",
             "Go to ", lsp_host, "and paste the auth token below\n")
@@ -57,8 +56,6 @@ connectToLSP <- function( lsp_host, usern, api_token ){
 .lspGet <- function( lsp_host, path='/', api_token ){
     endPoint <- paste( lsp_host, path, '?token=', api_token, sep="" )
 
-    #print( endPoint )
-    
     # use the ssl.verifyhost=FALSE option to bypass certificate check
     tryCatch( response <- getURL( endPoint, ssl.verifyhost=FALSE ),
              error = function( e ){
@@ -66,14 +63,13 @@ connectToLSP <- function( lsp_host, usern, api_token ){
                          'The message from the server was: \n',
                          e$message)
              })
-
-    tryCatch( jsonResp <- jsonlite::fromJSON( response ),
+    
+    tryCatch( jsonResp <- jsonlite::fromJSON( gsub( "[\n\r]", "", response )),
               error = function( e ){
                 stop( 'Could not parse JSON response, \n',
                          'The error message from the server was: \n',
                          e$message)
               })
-    #print(jsonResp)
     .createDataFrame( jsonResp )
 }
 
