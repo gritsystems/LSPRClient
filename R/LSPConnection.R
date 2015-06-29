@@ -20,8 +20,8 @@
 #
 # You should have received a copy of the GNU General Public License along
 # with this program. If not, see <http://www.gnu.org/licenses/>.
-lspClientEnv <<- NULL
-lspClientEnv$api_version <- "0.1.0"
+lspClientEnv <- new.env()
+assign( 'api_version', '0.1.0', envir = lspClientEnv )
 
 connectToLSP <- function( lsp_host, api_token ){
   
@@ -29,24 +29,24 @@ connectToLSP <- function( lsp_host, api_token ){
     {
       lsp_host = paste( lsp_host, '/', sep="" )
     }
-  
-    lspClientEnv$host <<- lsp_host
+
+    assign( 'host', lsp_host, envir = lspClientEnv )
         
     if(  nchar(api_token, type="chars") < 1 ){
         cat("Please provide an authentication token from your settings page in LSP\n",
             "Go to ", lsp_host, "and paste the auth token below\n")
         api_token <- readline()
     }   
-    lspClientEnv$token <<- api_token
+    assign( 'api_token', api_token, envir = lspClientEnv )
     
-    .authenticateWithLSP( lspClientEnv )
+    .authenticateWithLSP()
 }
 
-.authenticateWithLSP <- function( lspClientEnv ){
-  version <- .lspGet(lspClientEnv$host, 'api/version', lspClientEnv$token)
-  if( version$api_version != lspClientEnv$api_version )
+.authenticateWithLSP <- function(){
+  version <- .lspGet(get('host', envir = lspClientEnv ), 'api/version', get( 'api_token', envir = lspClientEnv ))
+  if( version$api_version != get( 'api_version', envir = lspClientEnv ) )
   {
-    warning( sprintf( 'Server is version %s but this client expects %s\nThings might not work as expected', version$api_version, lspClientEnv$api_version ) )
+    warning( sprintf( 'Server is version %s but this client expects %s\nThings might not work as expected', version$api_version, get( 'api_version', envir = lspClientEnv) ) )
   }else
   {
     message( sprintf( 'Successfully authenticated with LSP API (v%s), ready to continue', version$api_version ) )

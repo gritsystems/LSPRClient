@@ -22,9 +22,9 @@
 # with this program. If not, see <http://www.gnu.org/licenses/>.
 
 getCompound <- function( collaboratorId, compoundId, as.data.frame=TRUE){
-  .lspGet(lspClientEnv$host, sprintf('/api/compounds/%s.json', compoundId), lspClientEnv$token)
+  .lspGet(get( 'host', envir = lspClientEnv ), sprintf('/api/compounds/%s.json', compoundId), get( 'api_token', lspClientEnv ))
 }
 
 getCompounds <- function( collaboratorId, externalIds=list(), as.data.frame=TRUE){
-  .lspGet(lspClientEnv$host, 'api/compounds.json', lspClientEnv$token)
+  .lspGet(get( 'host', envir = lspClientEnv ), 'api/compounds.json', get( 'api_token', lspClientEnv ))
 }
