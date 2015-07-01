@@ -75,13 +75,32 @@ connectToLSP <- function( lsp_host, api_token ){
     .createDataFrame( jsonResp )
 }
 
-.lspGetFallback <-  function( lsp_host, path='/' ){
-    
-    header <- NULL
-    header <- c(header, paste( 'GET ', lsp_host, path, 'HTTP/1.0\r\n', sep=""))
-    header <- c(header, 'Accept: application/json' )
+.lspGetFallback <-  function( lsp_host, path='/', api_token ){
+    port_no <- gsub( '.*([^0-9]+)', '\\1',  lsp_host, perl=TRUE )
 
-    connection <- socketConnection( host=lsp_host, port='443', open='r', blocking=TRUE, encoding='UTF-8' )
+    if( nchar(port_no) < 1 )
+    {
+      port_no <- '443'
+    }else
+    {
+      port_no <- gsub( ':([0-9]+)', '\\1', port_no )
+    }
+    
+    lsp_host <- gsub( ':[0-9]+', '', lsp_host ) #remove ports, as we are defining them below
+    lsp_host <- gsub( '/$', '', lsp_host ) #remove trailing slashes, if any
+    scheme <- gsub( '(^.+):/(.+)$', '\\1', lsp_host )
+    
+    if( grepl(scheme, 'https' ))
+    {
+      stop( 'https scheme is not supported by the fallback function')      
+    }
+    
+    lsp_host <- substring( lsp_host, regexpr( '://', lsp_host )+3, nchar(lsp_host) )
+
+    header <- NULL
+    header <- c(header, paste( 'GET', path, 'HTTP/1.1\r\n', sep=" "))
+
+    connection <- socketConnection( host=lsp_host, port=port_no, open='r', blocking=TRUE, encoding='UTF-8', server = FALSE )
 
     writeLines( header, connection )
 
