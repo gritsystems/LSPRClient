@@ -66,7 +66,7 @@ connectToLSP <- function( lsp_host, api_token ){
                          e$message)
              })
     
-    tryCatch( jsonResp <- jsonlite::fromJSON( gsub( "[\n\r]", "", response )),
+    tryCatch( jsonResp <- jsonlite::fromJSON( gsub( "[\n\r]", "", response ), flatten = TRUE),
               error = function( e ){
                 stop( 'Could not parse JSON response, \n',
                          'The error message from the server was: \n',
@@ -101,7 +101,6 @@ connectToLSP <- function( lsp_host, api_token ){
 
     # and finally the response body
     resp <- readLines( connection )
-    
     response$body = fromJSON( resp, asText=TRUE, nullValue=NA )
     
     .createDataFrame( response )
@@ -109,8 +108,8 @@ connectToLSP <- function( lsp_host, api_token ){
 
 .createDataFrame <- function( resp ){
     json_file <- lapply(resp$data, function(x) {
-                            x[sapply(x, is.null)] <- NA
-                            unlist(x)
+      x[sapply(x, is.null)] <- NA
+                            x
                         })
     as.data.frame( json_file )
 }
