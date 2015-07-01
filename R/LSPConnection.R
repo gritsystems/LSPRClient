@@ -23,6 +23,8 @@
 lspClientEnv <- new.env()
 assign( 'api_version', '0.1.0', envir = lspClientEnv )
 
+options(stringsAsFactors = FALSE)
+
 connectToLSP <- function( lsp_host, api_token ){
   
     if( substring(lsp_host, nchar(lsp_host)) != '/' )
