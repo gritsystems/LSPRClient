@@ -20,11 +20,26 @@
 #
 # You should have received a copy of the GNU General Public License along
 # with this program. If not, see <http://www.gnu.org/licenses/>.
-lspClientEnv <- new.env()
+
+#' The LSPRClient will check the LSP API for an expected version number to make
+#' sure that the entities and formats are conformant to the client
+lspClientEnv <- new.env() 
 assign( 'api_version', '0.1.0', envir = lspClientEnv )
 
 options(stringsAsFactors = FALSE)
 
+#' This function is the entrypoint for interaction with the LSP API through the 
+#' R Client.
+#' The prerequisites for using this function is an endpoint URL pointing to a
+#' running instance of LSP, e.g 'https://lsp.gritsystems.dk'. It is possible to 
+#' specify a port-number to the endpoint, e.g. 'https://lsp.gritsystems.dk:443'.
+#' The second prerequisite is an api-token, which is obtainable from the
+#' LSP installation. See the README.md file for more information on how to do
+#' this.
+#' Once successfully authenticated (in this case against the 0.1.0 version of the 
+#' api), you will see the message
+#' \code{Successfully authenticated with LSP API (v0.1.0), ready to continue}
+#'
 connectToLSP <- function( lsp_host, api_token ){
   
     if( substring(lsp_host, nchar(lsp_host)) != '/' )

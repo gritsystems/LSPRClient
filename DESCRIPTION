@@ -1,7 +1,7 @@
 Package: LSPRClient
 Type: Package
 Title:LSP R Client for accessing the LSP REST API
-Version: 0.1
+Version: 0.1.0
 Date: 2015-04-23
 Depends: jsonlite, RCurl
 Author: Steen Manniche
